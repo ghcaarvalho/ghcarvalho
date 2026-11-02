@@ -1,2 +1,3 @@
-# ghcarvalho
-Controle de preços - Viagem Paraguai 2026
+# Compras em Ciudad del Este
+
+Versão pública do painel de preços (atualizada todo dia após a coleta). Abra em https://gustosolindodemorrer-droid.github.io/ghcarvalho/

@@ -1,0 +1,527 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Compras em Ciudad del Este</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: barra translúcida no topo, hero com o câmbio, vitrine de produtos em blocos grandes, carrossel de lojas, dock flutuante embaixo e painéis que sobem sobre a página */
+:root{
+  --bg:#FBFBFD; --tile:#F1F2F5; --tile-2:#E8EAEF; --ink:#16171A; --soft:#6B6F78; --hair:#DADDE3;
+  --accent:#0B6BD6; --accent-ink:#FFFFFF; --usd:#0E8A5F; --brl:#0B6BD6; --fx:#C25A17;
+  --good:#0E8A5F; --bad:#C2341B; --glass:rgba(251,251,253,.72); --shade:rgba(10,12,16,.38);
+  --f:"Onest",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --r:24px; --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#000000; --tile:#141518; --tile-2:#1D1F23; --ink:#F4F5F7; --soft:#9AA0AA; --hair:#2A2D33;
+  --accent:#3D93F5; --accent-ink:#00111F; --usd:#38D39A; --brl:#5AA5FF; --fx:#F29B5C;
+  --good:#38D39A; --bad:#FF7A63; --glass:rgba(10,10,12,.66); --shade:rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#000000; --tile:#141518; --tile-2:#1D1F23; --ink:#F4F5F7; --soft:#9AA0AA; --hair:#2A2D33;
+  --accent:#3D93F5; --accent-ink:#00111F; --usd:#38D39A; --brl:#5AA5FF; --fx:#F29B5C;
+  --good:#38D39A; --bad:#FF7A63; --glass:rgba(10,10,12,.66); --shade:rgba(0,0,0,.6); color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 120px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--glass)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+a{color:var(--accent);text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto}
+
+/* barra superior */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);background:var(--glass);border-bottom:1px solid var(--hair)}
+.bar .in{max-width:1080px;margin:0 auto;height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brand{font-weight:700;font-size:15px;letter-spacing:-.01em}
+.fxpill{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;background:var(--tile);font-size:13px;font-weight:500;transition:transform .2s var(--ease)}
+.fxpill:hover{transform:scale(1.04)}
+.fxpill .dot{width:7px;height:7px;border-radius:50%;background:var(--fx)}
+
+/* hero */
+.hero{text-align:center;padding-block:64px 36px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.eyebrow{font-size:14px;font-weight:600;color:var(--fx);letter-spacing:.01em}
+h1{margin:0;font-size:clamp(40px,7.5vw,80px);line-height:1.02;letter-spacing:-.035em;font-weight:800;text-wrap:balance;max-width:14ch}
+.lead{margin:0;font-size:clamp(17px,2.2vw,22px);color:var(--soft);max-width:36ch;text-wrap:balance}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%;max-width:780px;margin-top:22px}
+.stat{background:var(--tile);border-radius:var(--r);padding:18px 16px;text-align:left;transition:transform .25s var(--ease)}
+button.stat:hover{transform:translateY(-3px)}
+.stat .k{font-size:13px;color:var(--soft)}
+.stat .v{font-size:clamp(22px,3.6vw,32px);font-weight:700;letter-spacing:-.02em;margin-top:2px}
+.stat .s{font-size:12px;color:var(--soft)}
+@media (max-width:620px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}}
+
+section{scroll-margin-top:72px}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:56px 0 18px}
+h2{margin:0;font-size:clamp(28px,4.4vw,44px);letter-spacing:-.03em;font-weight:800;text-wrap:balance}
+.sh p{margin:0;color:var(--soft);font-size:15px}
+
+/* vitrine */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.tiles{grid-template-columns:1fr}}
+.tile{position:relative;overflow:hidden;border-radius:calc(var(--r) + 4px);background:var(--tile);padding:32px 28px 0;min-height:420px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
+  transition:transform .35s var(--ease)}
+.tile.dark{background:var(--ink);color:var(--bg)}
+.tile.dark .t-sub,.tile.dark .t-meta{color:color-mix(in srgb,var(--bg) 70%,transparent)}
+.tile:hover{transform:scale(1.012)}
+.t-name{font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.025em;line-height:1.1}
+.t-sub{font-size:15px;color:var(--soft)}
+.t-price{font-size:19px;font-weight:600;margin-top:8px}
+.t-meta{font-size:13px;color:var(--soft)}
+.t-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:9px 18px;font-size:14px;font-weight:600;transition:transform .2s var(--ease),background .2s}
+.pill.pri{background:var(--accent);color:#FFFFFF}
+.pill.pri:hover{transform:scale(1.05)}
+.pill.ghost{color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.tile.dark .pill.ghost{color:var(--bg);box-shadow:inset 0 0 0 1.5px currentColor}
+.pill.ghost:hover{transform:scale(1.05)}
+.t-art{margin-top:auto;width:62%;max-width:260px;aspect-ratio:1/1;display:grid;place-items:end center;padding-bottom:12px}
+.t-art img{max-width:100%;max-height:100%;object-fit:contain}
+.t-art svg{width:72%;height:72%;color:var(--soft);transition:transform .5s var(--ease)}
+.tile.dark .t-art svg{color:color-mix(in srgb,var(--bg) 55%,transparent)}
+.tile:hover .t-art svg{transform:translateY(-8px) rotate(-4deg)}
+.badge{position:absolute;top:16px;right:16px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--bg);color:var(--ink)}
+.badge.down{color:var(--good)} .badge.up{color:var(--bad)}
+
+/* lojas */
+.rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.store{flex:none;scroll-snap-align:start;width:168px;background:var(--tile);border-radius:var(--r);padding:20px 16px;display:flex;flex-direction:column;gap:12px;align-items:flex-start;text-align:left;transition:transform .25s var(--ease),background .2s}
+.store:hover{transform:translateY(-4px);background:var(--tile-2)}
+.mono{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:16px;color:#FFFFFF;background:var(--c,#0B6BD6);letter-spacing:-.02em}
+.store .n{font-weight:700;font-size:15px;line-height:1.2}
+.store .c{font-size:13px;color:var(--soft)}
+.store .p{font-size:13px;font-weight:600;color:var(--usd)}
+.railnav{display:flex;gap:8px}
+.circ{width:36px;height:36px;border-radius:50%;background:var(--tile);display:grid;place-items:center;transition:transform .2s var(--ease)}
+.circ:hover{transform:scale(1.1)}
+.circ svg{width:16px;height:16px}
+
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:13px;font-weight:600;color:var(--soft)}
+.fld input,.fld select{font:inherit;font-size:16px;padding:12px 14px;border-radius:14px;border:1px solid var(--hair);background:var(--tile);color:var(--ink);width:100%}
+.fld input:focus,.fld select:focus{outline:2px solid var(--accent);outline-offset:0}
+.fld .hint{font-size:12px;color:var(--soft)}
+.err{color:var(--bad);font-size:14px}
+.pill.danger{color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
+.confirm{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--tile);padding:14px;border-radius:16px;font-size:14px}
+.dock button.add{background:var(--accent);color:#FFFFFF}
+.pending{font-size:13px;font-weight:600;color:var(--fx);margin-top:8px}
+.foot{margin-top:56px;font-size:12px;color:var(--soft);max-width:70ch;line-height:1.6}
+
+/* dock flutuante */
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:25;display:flex;gap:4px;padding:6px;border-radius:99px;
+  background:var(--glass);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);box-shadow:0 10px 30px rgba(0,0,0,.14),inset 0 0 0 1px var(--hair)}
+.dock button{padding:10px 16px;border-radius:99px;font-size:14px;font-weight:600;color:var(--soft);transition:background .25s,color .25s}
+.dock button[aria-current="true"]{background:var(--ink);color:var(--bg)}
+@media (max-width:420px){.dock button{padding:10px 12px;font-size:13px}}
+.fab{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:25;width:46px;height:46px;border-radius:50%;
+  background:var(--accent);color:#FFFFFF;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:transform .25s var(--ease),opacity .25s}
+.fab[hidden]{display:grid!important;opacity:0;pointer-events:none;transform:scale(.6)}
+.fab svg{width:20px;height:20px}
+
+/* painel deslizante */
+.scrim{position:fixed;inset:0;z-index:40;background:var(--shade);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:41;left:50%;bottom:0;width:min(760px,100%);max-height:calc(92% - env(safe-area-inset-top,0px));transform:translate(-50%,104%);
+  background:var(--bg);border-radius:28px 28px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25);display:flex;flex-direction:column;transition:transform .45s var(--ease)}
+.sheet.on{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--hair);margin:10px auto 0;flex:none}
+.sx{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:var(--tile);display:grid;place-items:center;z-index:2}
+.sx svg{width:14px;height:14px}
+.sbody{overflow-y:auto;padding:14px max(20px,env(safe-area-inset-left,0px)) calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px}
+.s-head{display:flex;gap:14px;align-items:center;padding-right:40px}
+.s-ico{width:64px;height:64px;flex:none;border-radius:18px;background:var(--tile);display:grid;place-items:center;overflow:hidden}
+.s-ico svg{width:60%;height:60%;color:var(--soft)} .s-ico img{width:100%;height:100%;object-fit:contain}
+.s-title{font-size:24px;font-weight:800;letter-spacing:-.025em;line-height:1.1;margin:0}
+.s-sub{font-size:14px;color:var(--soft)}
+.seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:3px;gap:2px;align-self:flex-start}
+.seg button{padding:7px 14px;border-radius:9px;font-size:13px;font-weight:600;color:var(--soft);transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--bg);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.big{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end}
+.big .v{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.big .l{font-size:13px;color:var(--soft);margin-top:4px}
+.big .d{font-size:14px;font-weight:600}
+.up{color:var(--bad)} .down{color:var(--good)}
+.chart{position:relative;height:260px;background:var(--tile);border-radius:20px;padding:14px 10px 8px}
+.cmp{display:flex;flex-direction:column;gap:6px}
+.cmp h3,.s-h3{margin:4px 0 2px;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.row{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 10px;border-radius:12px;text-align:left;width:100%;transition:background .2s}
+.row:hover{background:var(--tile)}
+.row[aria-pressed="true"]{background:var(--tile-2)}
+.row .rn{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{height:8px;border-radius:9px;background:var(--tile-2);overflow:hidden}
+.track i{display:block;height:100%;border-radius:9px;background:var(--usd);transform-origin:left;animation:grow .6s var(--ease) both}
+.row .rv{font-size:14px;font-weight:600;text-align:right}
+.row .rv small{display:block;font-weight:400;color:var(--soft);font-size:12px}
+.row.na .rv{color:var(--soft);font-weight:400}
+@keyframes grow{from{transform:scaleX(0)}}
+@media (max-width:520px){.row{grid-template-columns:96px minmax(0,1fr) auto}}
+.plist{display:flex;flex-direction:column;gap:8px}
+.pitem{display:flex;gap:14px;align-items:center;padding:12px;border-radius:18px;background:var(--tile);text-align:left;width:100%;transition:transform .2s var(--ease)}
+.pitem:hover{transform:scale(1.01)}
+.pitem .s-ico{width:56px;height:56px;background:var(--bg)}
+.pitem .pn{font-weight:700;font-size:15px}
+.pitem .pd{font-size:13px;color:var(--soft)}
+.pitem .pp{margin-left:auto;text-align:right;font-weight:700;white-space:nowrap}
+.pitem .pp small{display:block;font-weight:400;font-size:12px;color:var(--soft)}
+.chip{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--usd);color:#FFFFFF;margin-top:4px}
+.chip.na{background:transparent;color:var(--soft);box-shadow:inset 0 0 0 1px var(--hair)}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.note{font-size:13px;color:var(--soft)}
+.empty{padding:36px;text-align:center;color:var(--soft);background:var(--tile);border-radius:var(--r)}
+
+.reveal{animation:rise .7s var(--ease) both}
+@keyframes rise{from{transform:translateY(14px)}}
+@media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<header class="bar"><div class="in">
+  <span class="brand">Ciudad del Este · Monitor</span>
+  <button class="fxpill num" id="fxPill" aria-label="Abrir cotação do dólar"><span class="dot"></span><span id="fxPillTxt">Dólar …</span></button>
+</div></header>
+
+<div class="wrap">
+  <section class="hero" id="inicio">
+    <div class="eyebrow" id="countdown">Monitoramento diário até 24/12</div>
+    <h1>Seu Paraguai, preço a preço.</h1>
+    <p class="lead">O menor valor de cada item nas grandes lojas, convertido pelo dólar do dia.</p>
+    <div class="stats">
+      <button class="stat reveal" id="stCom"><div class="k">Dólar comercial</div><div class="v num" id="vCom">…</div><div class="s" id="sCom">aguardando dados</div></button>
+      <button class="stat reveal" id="stSite" style="animation-delay:.06s"><div class="k">Dólar no Compras Paraguai</div><div class="v num" id="vSite">…</div><div class="s">cotação usada pelo site</div></button>
+      <div class="stat reveal" style="animation-delay:.12s"><div class="k">Sua lista hoje</div><div class="v num" id="vTotal">…</div><div class="s" id="sTotal">soma dos menores preços</div></div>
+    </div>
+  </section>
+
+  <section id="lista">
+    <div class="sh"><h2>Sua lista.</h2><p id="listaSub"></p></div>
+    <div class="tiles" id="tiles"><div class="empty">Os itens aparecem aqui assim que os dados carregarem.</div></div>
+  </section>
+
+  <section id="lojas">
+    <div class="sh"><h2>Lojas.</h2>
+      <div class="railnav">
+        <button class="circ" id="railL" aria-label="Lojas anteriores"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 3 5 8l5 5"/></svg></button>
+        <button class="circ" id="railR" aria-label="Próximas lojas"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 3 5 5-5 5"/></svg></button>
+      </div>
+    </div>
+    <div class="rail" id="rail"></div>
+  </section>
+
+  <p class="foot">Preços coletados todos os dias no Compras Paraguai, considerando a menor oferta de cada loja para a variante escolhida. Valores em reais convertidos pelo dólar comercial do dia, sem IOF, spread de cartão ou impostos de importação.</p>
+</div>
+
+<nav class="dock" aria-label="Navegação">
+  <button data-go="inicio" aria-current="true">Início</button>
+  <button data-go="lista">Lista</button>
+  <button data-go="lojas">Lojas</button>
+  <button data-go="dolar">Dólar</button>
+  <button data-go="add" class="add" aria-label="Adicionar item à lista">+ Item</button>
+</nav>
+<button class="fab" id="fab" hidden aria-label="Voltar ao topo"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 16V4M4.5 9.5 10 4l5.5 5.5"/></svg></button>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle" aria-hidden="true">
+  <div class="grab"></div>
+  <button class="sx" id="sx" aria-label="Fechar"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 2l10 10M12 2 2 12"/></svg></button>
+  <div class="sbody" id="sbody"></div>
+  <input type="file" id="fileIn" accept="image/*" hidden>
+</div>
+
+<script id="dados" type="application/json">{"atualizado":"2026-11-01","produtos":[{"id":"iphone17pm","categoria":"phone","detalhe":"Laranja cósmico","nome":"iPhone 17 Pro Max 256 GB","ordem":1,"url":"https://www.comprasparaguai.com.br/celular-apple-iphone-17-pro-max-256gb_64041/","variante":"cor laranja (Cosmic Orange)"},{"id":"watch-s11","categoria":"watch","detalhe":"GPS, caixa silver","nome":"Apple Watch Series 11 42 mm","ordem":2,"url":"https://www.comprasparaguai.com.br/relogio-apple-watch-series-11-42mm_64310/","variante":"GPS, caixa de alumínio silver"},{"id":"ipad11","categoria":"tablet","detalhe":"Wi-Fi, qualquer cor","nome":"iPad 11ª geração (A16) 128 GB","ordem":3,"url":"https://www.comprasparaguai.com.br/tablet-apple-ipad-11a-geracao-2025-128gb-11_59111/","variante":"Wi-Fi, 128 GB, qualquer cor"},{"id":"macbook-air-m5","categoria":"laptop","detalhe":"16 GB, SSD 512 GB, qualquer cor","nome":"MacBook Air M5 13,6\"","ordem":4,"url":"https://www.comprasparaguai.com.br/notebook-apple-macbook-air-2026-apple-m5-memoria-16gb-ssd-512gb-136_67855/","variante":"13,6 polegadas, 16 GB, 512 GB, qualquer cor"}],"lojas":[{"id":"cellshop","nome":"Cellshop","ordem":1,"sigla":"CS"},{"id":"shopping-china","nome":"Shopping China","ordem":2,"sigla":"SC"},{"id":"nissei","nome":"Nissei","ordem":3,"sigla":"NI"},{"id":"mega-eletronicos","nome":"Mega Eletrônicos","ordem":4,"sigla":"ME"},{"id":"star-games","nome":"Star Games","ordem":5,"sigla":"SG"},{"id":"visaovip","nome":"Visão VIP","ordem":6,"sigla":"VV"},{"id":"atacado-connect","nome":"Atacado Connect","ordem":7,"sigla":"AC"},{"id":"new-zone","nome":"New Zone","ordem":8,"sigla":"NZ"},{"id":"mobile-zone","nome":"Mobile Zone","ordem":9,"sigla":"MZ"},{"id":"madrid-center","nome":"Madrid Center","ordem":10,"sigla":"MC"},{"id":"multipass","nome":"MultiPass","ordem":11,"sigla":"MP"},{"id":"one-click","nome":"One Click","ordem":12,"sigla":"OC"},{"id":"star-company","nome":"Star Company","ordem":13,"sigla":"ST"},{"id":"alborada","nome":"Alborada","ordem":14,"sigla":"AL"},{"id":"matrix-importados","nome":"Matrix Importados","ordem":15,"sigla":"MI"},{"id":"best-shop-paraguai","nome":"Best Shop","ordem":16,"sigla":"BS"},{"id":"empire-shop","nome":"Empire Shop","ordem":17,"sigla":"ES"}],"coletas":[{"data":"2026-11-01","dolarComercial":5.446,"dolarComercialRef":"fechamento de 30/10","dolarSite":5.4,"precos":{"ipad11":{"atacado-connect":{"usd":453},"cellshop":{"usd":455},"madrid-center":{"usd":460},"mega-eletronicos":{"usd":449},"mobile-zone":{"usd":449},"multipass":{"usd":458},"new-zone":{"usd":449},"nissei":{"usd":449},"one-click":{"usd":449},"shopping-china":{"usd":459},"star-company":{"usd":453},"visaovip":{"usd":449}},"iphone17pm":{"alborada":{"usd":1263},"atacado-connect":{"usd":1280},"best-shop-paraguai":{"usd":1263},"cellshop":{"alt":1285,"usd":null},"matrix-importados":{"usd":1275},"mega-eletronicos":{"alt":1265,"usd":null},"multipass":{"usd":1263},"nissei":{"link":"https://www.comprasparaguai.com.br/apple-iphone-17-pro-max-a3526-dual-256-gb-mfyn4bea-cosmic-orange__5063595/","usd":1335},"one-click":{"usd":1263},"shopping-china":{"usd":1270},"star-company":{"alt":1263,"usd":null},"star-games":{"usd":1273},"visaovip":{"alt":1275,"usd":null}},"macbook-air-m5":{"cellshop":{"usd":1270},"mega-eletronicos":{"usd":1265},"multipass":{"usd":1275},"new-zone":{"usd":1275},"nissei":{"usd":1270},"one-click":{"usd":1262},"shopping-china":{"usd":1270},"visaovip":{"usd":1275}},"watch-s11":{"alborada":{"alt":360,"usd":null},"empire-shop":{"usd":370},"star-company":{"alt":345,"usd":null}}}}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const ICONS={
+ phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="6.5" y="2" width="11" height="20" rx="2.6"/><rect x="8.2" y="3.8" width="3.2" height="3.2" rx="1"/><path d="M10.5 20h3"/></svg>',
+ watch:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="6" y="6" width="12" height="12" rx="3.4"/><path d="M8.5 6 9 2h6l.5 4M8.5 18 9 22h6l.5-4M18 10.5h1"/></svg>',
+ tablet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="3.5" y="2.5" width="17" height="19" rx="2.2"/><circle cx="12" cy="4.3" r=".5"/></svg>',
+ laptop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="4.5" y="5" width="15" height="10.5" rx="1.4"/><path d="M2 18.2h20l-1 1.3H3z"/></svg>',
+ box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg>'
+};
+const HUES=["#0B6BD6","#0E8A5F","#C25A17","#7B45B5","#1F7A8C","#A1286A","#5E6B12","#B33A3A"];
+const $=id=>document.getElementById(id);
+const money=(v,p)=>v==null?"–":p+v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const fUSD=v=>money(v,"US$ "), fBRL=v=>money(v,"R$ ");
+const fFX=v=>v==null?"–":"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:3,maximumFractionDigits:3});
+const fDate=d=>{const[y,m,dd]=d.split("-");return dd+"/"+m};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const S={produtos:[],lojas:[],coletas:[],db:null,assets:null,user:null,sheet:null,mode:"usd",names:{}};
+const canAdd=()=>!!(S.db&&S.user&&S.user.canEdit&&S.user.canEdit());
+const byName=id=>id?(S.names[id]||"um amigo"):"";
+async function loadNames(){
+  if(!S.user||!S.user.profiles)return;
+  const ids=[...new Set(S.produtos.map(p=>p.adicionadoPor).filter(Boolean))].filter(id=>!(id in S.names));
+  if(!ids.length)return;
+  try{const ps=await S.user.profiles(ids);ids.forEach(id=>{S.names[id]=(ps[id]&&ps[id].name)||""});renderAll()}catch(e){}
+}
+let chart=null;
+
+(function countdown(){const d=Math.ceil((new Date("2026-12-24T23:59:59")-new Date())/864e5);
+  $("countdown").textContent=d>0?`Faltam ${d} dias para o fim do monitoramento`:"Monitoramento encerrado em 24/12"})();
+
+const last=()=>S.coletas[S.coletas.length-1]||null;
+const prevC=()=>S.coletas.length>1?S.coletas[S.coletas.length-2]:null;
+const pr=(c,p,l)=>c&&c.precos&&c.precos[p]&&c.precos[p][l]||null;
+const hue=lid=>HUES[Math.max(0,S.lojas.findIndex(l=>l.id===lid))%HUES.length];
+const sig=l=>esc(l.sigla||l.nome.slice(0,2).toUpperCase());
+const art=p=>p.fotoAsset?`<img src="/_blob/${esc(p.fotoAsset)}" alt="">`:(ICONS[p.categoria]||ICONS.box);
+function best(c,pid){let b=null;S.lojas.forEach(l=>{const x=pr(c,pid,l.id);if(x&&x.usd!=null&&(!b||x.usd<b.usd))b={usd:x.usd,loja:l,link:x.link}});return b}
+
+/* ---------- página ---------- */
+function renderHero(){
+  const c=last();if(!c)return;const p=prevC();
+  $("vCom").textContent=fFX(c.dolarComercial);
+  let s=c.dolarComercialRef||("coleta de "+fDate(c.data));
+  if(p&&p.dolarComercial){const dv=(c.dolarComercial/p.dolarComercial-1)*100;s+=` · ${dv>=0?"+":""}${dv.toFixed(2)}%`}
+  $("sCom").textContent=s;$("vSite").textContent=fFX(c.dolarSite);
+  $("fxPillTxt").textContent="US$ 1 = "+fFX(c.dolarComercial);
+  let tot=0,n=0;S.produtos.forEach(pp=>{const b=best(c,pp.id);if(b){tot+=b.usd;n++}});
+  $("vTotal").textContent=n?fUSD(tot):"–";
+  $("sTotal").textContent=n?`${fBRL(tot*c.dolarComercial)} · ${n} de ${S.produtos.length} itens`:"sem ofertas hoje";
+}
+function renderTiles(){
+  const c=last(),el=$("tiles");if(!c||!S.produtos.length)return;
+  $("listaSub").textContent=`Coleta de ${fDate(c.data)}`;
+  el.innerHTML="";
+  S.produtos.forEach((p,i)=>{
+    const b=best(c,p.id),pb=best(prevC(),p.id);
+    let badge="";
+    if(b&&pb){const d=b.usd-pb.usd;if(d)badge=`<span class="badge ${d<0?"down":"up"} num">${d<0?"▼":"▲"} ${fUSD(Math.abs(d))}</span>`}
+    const t=document.createElement("article");t.className="tile reveal"+(i%4===1||i%4===2?" dark":"");t.style.animationDelay=(i*.05)+"s";
+    t.innerHTML=`${badge}<div class="t-name">${esc(p.nome)}</div><div class="t-sub">${esc(p.detalhe)}</div>`+
+      (b?`<div class="t-price num">A partir de ${fUSD(b.usd)}</div><div class="t-meta num">${fBRL(b.usd*c.dolarComercial)} · ${esc(b.loja.nome)}</div>`
+         :(S.coletas.some(k=>k.precos&&k.precos[p.id])?`<div class="t-meta">Sem oferta da variante escolhida hoje</div>`:`<div class="pending">Aguardando a primeira coleta, todo dia às 18h47</div>`))+
+      (p.adicionadoPor?`<div class="t-meta">Adicionado por ${esc(byName(p.adicionadoPor))}</div>`:"")+
+      `<div class="t-actions"><button class="pill pri" data-a="cmp">Comparar lojas</button><button class="pill ghost" data-a="hist">Ver histórico</button></div><div class="t-art">${art(p)}</div>`;
+    t.querySelector('[data-a="cmp"]').onclick=()=>openProduct(p.id,b?b.loja.id:null,"cmp");
+    t.querySelector('[data-a="hist"]').onclick=()=>openProduct(p.id,b?b.loja.id:null,"hist");
+    el.appendChild(t);
+  });
+}
+function renderRail(){
+  const c=last(),el=$("rail");el.innerHTML="";
+  const rank=S.lojas.map(l=>{const n=S.produtos.filter(p=>{const x=pr(c,p.id,l.id);return x&&x.usd!=null}).length;
+    const wins=S.produtos.filter(p=>{const b=best(c,p.id),x=pr(c,p.id,l.id);return b&&x&&x.usd===b.usd}).length;return{l,n,wins}});
+  rank.sort((a,b)=>b.n-a.n||b.wins-a.wins);
+  rank.forEach(({l,n,wins})=>{
+    const b=document.createElement("button");b.className="store";
+    b.innerHTML=`<span class="mono" style="--c:${hue(l.id)}">${sig(l)}</span><span><div class="n">${esc(l.nome)}</div><div class="c">${n} de ${S.produtos.length} itens hoje</div>${wins?`<div class="p">${wins} menor${wins>1?"es":""} preço${wins>1?"s":""}</div>`:""}</span>`;
+    b.onclick=()=>openStore(l.id);el.appendChild(b);
+  });
+}
+$("railL").onclick=()=>$("rail").scrollBy({left:-360,behavior:reduce?"auto":"smooth"});
+$("railR").onclick=()=>$("rail").scrollBy({left:360,behavior:reduce?"auto":"smooth"});
+function renderAll(){renderHero();renderTiles();renderRail();if(S.sheet)renderSheet()}
+
+/* ---------- dock e botão flutuante ---------- */
+document.querySelectorAll(".dock button").forEach(b=>b.onclick=()=>{
+  if(b.dataset.go==="dolar"){openDollar();return}
+  if(b.dataset.go==="add"){showSheet({t:"add"});return}
+  $(b.dataset.go).scrollIntoView({behavior:reduce?"auto":"smooth"});
+});
+$("fxPill").onclick=openDollar;$("stCom").onclick=openDollar;$("stSite").onclick=openDollar;
+$("fab").onclick=()=>scrollTo({top:0,behavior:reduce?"auto":"smooth"});
+function spy(){
+  $("fab").hidden=scrollY<500;
+  let cur="inicio";["inicio","lista","lojas"].forEach(id=>{if($(id).getBoundingClientRect().top<innerHeight*.4)cur=id});
+  document.querySelectorAll(".dock button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===cur&&!S.sheet));
+}
+addEventListener("scroll",spy,{passive:true});
+
+/* ---------- painel deslizante ---------- */
+let lastFocus=null;
+function showSheet(state){
+  S.sheet=state;lastFocus=document.activeElement;
+  $("scrim").classList.add("on");$("sheet").classList.add("on");$("sheet").setAttribute("aria-hidden","false");
+  document.querySelectorAll(".dock button").forEach(b=>b.setAttribute("aria-current",b.dataset.go==="dolar"&&state.t==="fx"));
+  document.documentElement.style.overflow="hidden";
+  renderSheet();$("sbody").scrollTop=0;setTimeout(()=>$("sx").focus(),50);
+}
+function closeSheet(){
+  S.sheet=null;$("scrim").classList.remove("on");$("sheet").classList.remove("on");$("sheet").setAttribute("aria-hidden","true");
+  document.documentElement.style.overflow="";
+  if(chart){chart.destroy();chart=null}spy();if(lastFocus)lastFocus.focus();
+}
+$("sx").onclick=closeSheet;$("scrim").onclick=closeSheet;
+addEventListener("keydown",e=>{if(e.key==="Escape"&&S.sheet)closeSheet()});
+function openProduct(pid,lid,focus){showSheet({t:"p",pid,lid,focus})}
+function openStore(lid){showSheet({t:"s",lid})}
+function openDollar(){showSheet({t:"fx"})}
+
+function renderSheet(){
+  const s=S.sheet,c=last(),body=$("sbody");if(!s)return;
+  if(chart){chart.destroy();chart=null}
+  if(s.t==="add")return sheetAdd(body);
+  if(!c){body.innerHTML='<div class="empty">Sem coletas carregadas ainda.</div>';return}
+  if(s.t==="fx")return sheetFX(body,c);
+  if(s.t==="s")return sheetStore(body,c,s);
+  return sheetProduct(body,c,s);
+}
+
+function sheetAdd(body){
+  if(!canAdd())return sheetAsk(body);
+  body.innerHTML=`<div class="s-head"><div><h3 class="s-title" id="sTitle">Adicionar à lista</h3><div class="s-sub">O preço aparece depois da próxima coleta, todo dia às 18h47.</div></div></div>
+   <form id="addForm" style="display:flex;flex-direction:column;gap:14px" novalidate>
+    <div class="fld"><label for="fNome">Produto</label><input id="fNome" maxlength="80" placeholder="Ex.: AirPods Pro 3" required></div>
+    <div class="fld"><label for="fDet">Versão, cor ou capacidade</label><input id="fDet" maxlength="80" placeholder="Ex.: branco, com estojo USB-C"><span class="hint">Quanto mais preciso, melhor a comparação entre lojas. Deixe em branco para aceitar qualquer versão.</span></div>
+    <div class="fld"><label for="fCat">Tipo</label><select id="fCat"><option value="phone">Celular</option><option value="watch">Relógio</option><option value="tablet">Tablet</option><option value="laptop">Notebook</option><option value="box" selected>Outro</option></select></div>
+    <div class="fld"><label for="fUrl">Link do produto no Compras Paraguai (opcional)</label><input id="fUrl" type="url" inputmode="url" placeholder="https://www.comprasparaguai.com.br/..."><span class="hint">Se não souber, deixe em branco que a coleta encontra o produto pelo nome.</span></div>
+    <div class="err" id="fErr" hidden></div>
+    <div class="acts"><button class="pill pri" type="submit" id="fBtn">Adicionar à lista</button><button class="pill ghost" type="button" id="fCancel">Cancelar</button></div>
+   </form>`;
+  $("fCancel").onclick=closeSheet;
+  $("addForm").onsubmit=async e=>{
+    e.preventDefault();
+    const nome=$("fNome").value.trim(),det=$("fDet").value.trim(),url=$("fUrl").value.trim(),err=$("fErr");
+    if(!nome){err.textContent="Escreva o nome do produto.";err.hidden=false;$("fNome").focus();return}
+    if(url&&!/^https:\/\/(www\.|mobile\.)?comprasparaguai\.com\.br\//.test(url)){err.textContent="O link precisa ser de uma página do comprasparaguai.com.br, ou fique em branco.";err.hidden=false;return}
+    err.hidden=true;$("fBtn").textContent="Salvando…";$("fBtn").disabled=true;
+    try{
+      const uid=await S.user.id();
+      const doc={nome,detalhe:det||"Qualquer versão",variante:det||"qualquer versão",categoria:$("fCat").value,ordem:Date.now(),criadoEm:new Date().toISOString(),pendente:true};
+      if(uid)doc.adicionadoPor=uid;if(url)doc.url=url;
+      await S.db.collection("produtos").add(doc);
+      closeSheet();$("lista").scrollIntoView({behavior:reduce?"auto":"smooth"});
+    }catch(x){err.textContent="Não foi possível salvar. Confira se você abriu o painel com a conta convidada como Editor.";err.hidden=false;$("fBtn").textContent="Adicionar à lista";$("fBtn").disabled=false}
+  };
+  setTimeout(()=>$("fNome").focus(),350);
+}
+
+function sheetAsk(body){
+  body.innerHTML=`<div class="s-head"><div><h3 class="s-title" id="sTitle">Pedir um item</h3><div class="s-sub">Mande o pedido para o Gustavo pelo WhatsApp. Ele inclui na lista e o preço aparece na próxima coleta.</div></div></div>
+   <form id="askForm" style="display:flex;flex-direction:column;gap:14px" novalidate>
+    <div class="fld"><label for="aNome">Produto</label><input id="aNome" maxlength="80" placeholder="Ex.: AirPods Pro 3"></div>
+    <div class="fld"><label for="aDet">Versão, cor ou capacidade</label><input id="aDet" maxlength="80" placeholder="Ex.: branco, 256 GB"></div>
+    <div class="fld"><label for="aQuem">Seu nome</label><input id="aQuem" maxlength="40" placeholder="Ex.: Tia Ana"></div>
+    <div class="err" id="aErr" hidden>Escreva o nome do produto.</div>
+    <div class="acts"><a class="pill pri" id="aSend" target="_blank" rel="noopener" href="#">Enviar pelo WhatsApp</a><button class="pill ghost" type="button" id="aCancel">Cancelar</button></div>
+    <p class="note">O WhatsApp abre com a mensagem pronta; escolha a conversa com o Gustavo e toque em enviar.</p>
+   </form>`;
+  const upd=()=>{const n=$("aNome").value.trim(),d=$("aDet").value.trim(),q=$("aQuem").value.trim();
+    const msg=`Oi, Gustavo! Pode incluir no painel de compras do Paraguai: ${n||"(produto)"}${d?" ("+d+")":""}.${q?" Pedido de "+q+".":""}`;
+    $("aSend").href="https://wa.me/?text="+encodeURIComponent(msg)};
+  ["aNome","aDet","aQuem"].forEach(id=>$(id).addEventListener("input",upd));upd();
+  $("aSend").onclick=e=>{if(!$("aNome").value.trim()){e.preventDefault();$("aErr").hidden=false;$("aNome").focus()}};
+  $("aCancel").onclick=closeSheet;
+  setTimeout(()=>$("aNome").focus(),350);
+}
+
+function sheetFX(body,c){
+  const first=S.coletas[0],dv=first?(c.dolarComercial/first.dolarComercial-1)*100:0;
+  body.innerHTML=`<div class="s-head"><div><h3 class="s-title" id="sTitle">Dólar</h3><div class="s-sub">Comercial e cotação usada pelo Compras Paraguai</div></div></div>
+   <div class="big"><div><div class="v num">${fFX(c.dolarComercial)}</div><div class="l">comercial · ${esc(c.dolarComercialRef||fDate(c.data))}</div></div>
+   <div><div class="v num" style="font-size:28px">${fFX(c.dolarSite)}</div><div class="l">no site</div></div>
+   ${S.coletas.length>1?`<div class="d num ${dv>0?"up":"down"}">${dv>0?"+":""}${dv.toFixed(2)}% desde ${fDate(first.data)}</div>`:""}</div>
+   <div class="chart"><canvas id="cv" aria-label="Gráfico do dólar"></canvas></div>
+   <p class="note">Quando o dólar sobe, o preço em reais sobe junto mesmo que a loja mantenha o valor em dólar. Compare o preço em R$ de cada item no histórico.</p>`;
+  if(!window.Chart)return;
+  chart=new Chart($("cv"),{type:"line",data:{labels:S.coletas.map(x=>fDate(x.data)),datasets:[
+    {label:"Comercial",data:S.coletas.map(x=>x.dolarComercial),borderColor:css("--fx"),backgroundColor:css("--fx")+"26",fill:true,tension:.3,borderWidth:2.5,pointRadius:S.coletas.length<20?3:0},
+    {label:"Site",data:S.coletas.map(x=>x.dolarSite),borderColor:css("--soft"),borderDash:[5,4],tension:.3,borderWidth:2,pointRadius:0}]},options:opts(v=>fFX(v),{legend:true})});
+}
+
+function sheetStore(body,c,s){
+  const l=S.lojas.find(x=>x.id===s.lid);if(!l)return closeSheet();
+  body.innerHTML=`<div class="s-head"><span class="mono" style="--c:${hue(l.id)};width:64px;height:64px;border-radius:18px;font-size:20px">${sig(l)}</span>
+    <div><h3 class="s-title" id="sTitle">${esc(l.nome)}</h3><div class="s-sub num">Coleta de ${fDate(c.data)} · dólar ${fFX(c.dolarComercial)}</div></div></div>
+    <div class="plist" id="plist"></div><p class="note">Toque num produto para ver o gráfico de preços desta loja.</p>`;
+  const el=$("plist");
+  S.produtos.forEach(p=>{
+    const x=pr(c,p.id,l.id),b=best(c,p.id);
+    let right;
+    if(x&&x.usd!=null)right=`${fUSD(x.usd)}<small>${fBRL(x.usd*c.dolarComercial)}</small>${b&&x.usd===b.usd?'<span class="chip">menor preço</span>':`<small>+${fUSD(x.usd-b.usd)} sobre o menor</small>`}`;
+    else if(x&&x.alt!=null)right=`<span class="chip na">outra cor ${fUSD(x.alt)}</span>`;
+    else right=`<span class="chip na">não anunciado</span>`;
+    const it=document.createElement("button");it.className="pitem";
+    it.innerHTML=`<span class="s-ico">${art(p)}</span><span><div class="pn">${esc(p.nome)}</div><div class="pd">${esc(p.detalhe)}</div></span><span class="pp num">${right}</span>`;
+    it.onclick=()=>{S.sheet={t:"p",pid:p.id,lid:l.id,focus:"hist"};renderSheet();$("sbody").scrollTop=0};
+    el.appendChild(it);
+  });
+}
+
+function sheetProduct(body,c,s){
+  const p=S.produtos.find(x=>x.id===s.pid);if(!p)return closeSheet();
+  if(!s.lid){const b=best(c,p.id);s.lid=b?b.loja.id:(S.lojas[0]&&S.lojas[0].id)}
+  const l=S.lojas.find(x=>x.id===s.lid);
+  const series=S.coletas.map(k=>{const x=pr(k,p.id,s.lid);return{d:k.data,usd:x&&x.usd!=null?x.usd:null,fx:k.dolarComercial,link:x&&x.link}});
+  const have=series.filter(z=>z.usd!=null),cur=series[series.length-1],first=have[0];
+  const low=have.length?Math.min(...have.map(z=>z.usd)):null;
+  let delta="";
+  if(first&&cur.usd!=null&&have.length>1){const dU=cur.usd-first.usd,dB=cur.usd*cur.fx-first.usd*first.fx;
+    delta=`<div><div class="d num ${dU>0?"up":dU<0?"down":""}">${dU>0?"+":""}${fUSD(dU)}</div><div class="d num ${dB>0?"up":dB<0?"down":""}">${dB>0?"+":""}${fBRL(dB)}</div><div class="l">desde ${fDate(first.d)}</div></div>`}
+  const canPhoto=S.assets&&canAdd();
+  body.innerHTML=`<div class="s-head"><span class="s-ico">${art(p)}</span><div><h3 class="s-title" id="sTitle">${esc(p.nome)}</h3><div class="s-sub">${esc(p.variante||p.detalhe)}${p.adicionadoPor?" · adicionado por "+esc(byName(p.adicionadoPor)):""}</div></div></div>
+   <div class="s-sub">Histórico em <b style="color:var(--ink)">${esc(l?l.nome:"")}</b></div>
+   <div class="big"><div><div class="v num" style="color:var(--usd)">${fUSD(cur.usd)}</div><div class="l">preço de hoje</div></div>
+     <div><div class="v num" style="font-size:28px;color:var(--brl)">${cur.usd!=null?fBRL(cur.usd*cur.fx):"–"}</div><div class="l num">pelo dólar de ${fFX(cur.fx)}</div></div>${delta}</div>
+   <div class="seg" role="group" aria-label="Moeda do gráfico">
+     <button data-m="usd" aria-pressed="${S.mode==="usd"}">US$</button><button data-m="brl" aria-pressed="${S.mode==="brl"}">R$</button><button data-m="both" aria-pressed="${S.mode==="both"}">Ambos</button></div>
+   <div class="chart"><canvas id="cv" aria-label="Gráfico de preço"></canvas></div>
+   <p class="note num">${have.length<2?`O gráfico ganha forma a cada coleta diária. Por enquanto há ${have.length} registro desta loja.`:`Menor preço já registrado nesta loja: ${fUSD(low)}.`}</p>
+   <div class="cmp" id="cmp"><h3>Hoje em cada loja</h3></div>
+   <div class="acts"><a class="pill pri" href="${esc(cur.link||p.url)}" target="_blank" rel="noopener">Ver ofertas no site</a>${canPhoto?'<button class="pill ghost" id="photoBtn">Trocar foto</button>':""}${canAdd()?'<button class="pill danger" id="rmBtn">Remover da lista</button>':""}</div>
+   <div class="confirm" id="rmBox" hidden><span>Remover este item da lista de todos? O histórico de preços deixa de aparecer.</span><button class="pill danger" id="rmYes">Remover</button><button class="pill ghost" id="rmNo">Manter</button></div>`;
+  if($("rmBtn")){$("rmBtn").onclick=()=>{$("rmBox").hidden=false};$("rmNo").onclick=()=>{$("rmBox").hidden=true};
+    $("rmYes").onclick=async()=>{$("rmYes").textContent="Removendo…";try{await S.db.doc("produtos/"+p.id).delete();closeSheet()}catch(x){$("rmYes").textContent="Não foi possível remover"}}}
+  body.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{S.mode=b.dataset.m;renderSheet()});
+  if($("photoBtn"))$("photoBtn").onclick=()=>$("fileIn").click();
+  // comparação entre lojas
+  const rows=S.lojas.map(x=>({l:x,v:pr(c,p.id,x.id)})).filter(r=>r.v&&(r.v.usd!=null||r.v.alt!=null));
+  const vals=rows.filter(r=>r.v.usd!=null).map(r=>r.v.usd),min=Math.min(...vals),max=Math.max(...vals);
+  rows.sort((a,b)=>(a.v.usd??1e9)-(b.v.usd??1e9));
+  const box=$("cmp");
+  rows.forEach(r=>{
+    const b=document.createElement("button");b.className="row"+(r.v.usd==null?" na":"");b.setAttribute("aria-pressed",r.l.id===s.lid);
+    const w=r.v.usd==null?0:(max===min?100:30+70*(1-(r.v.usd-min)/(max-min)));
+    b.innerHTML=`<span class="rn">${esc(r.l.nome)}</span><span class="track"><i style="width:${w}%;${r.v.usd===min?"":"background:var(--soft)"}"></i></span>`+
+      `<span class="rv num">${r.v.usd!=null?fUSD(r.v.usd)+`<small>${fBRL(r.v.usd*c.dolarComercial)}</small>`:"outra cor "+fUSD(r.v.alt)}</span>`;
+    b.onclick=()=>{s.lid=r.l.id;renderSheet()};
+    box.appendChild(b);
+  });
+  if(!rows.length)box.insertAdjacentHTML("beforeend",'<div class="note">Nenhuma loja anunciou este item hoje.</div>');
+  if(s.focus==="cmp"){s.focus=null;setTimeout(()=>box.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"}),300)}
+  if(!window.Chart)return;
+  const ds=[];
+  if(S.mode!=="brl")ds.push({label:"US$",data:series.map(z=>z.usd),borderColor:css("--usd"),backgroundColor:css("--usd")+"22",fill:S.mode==="usd",yAxisID:"y",tension:.3,spanGaps:true,borderWidth:2.5,pointRadius:3});
+  if(S.mode!=="usd")ds.push({label:"R$",data:series.map(z=>z.usd!=null?+(z.usd*z.fx).toFixed(2):null),borderColor:css("--brl"),backgroundColor:css("--brl")+"22",fill:S.mode==="brl",yAxisID:S.mode==="both"?"y1":"y",tension:.3,spanGaps:true,borderWidth:2.5,borderDash:S.mode==="both"?[5,4]:[],pointRadius:3});
+  const o=opts(v=>v,{legend:S.mode==="both"});
+  o.plugins.tooltip.callbacks.label=i=>i.dataset.label==="R$"?fBRL(i.parsed.y):fUSD(i.parsed.y);
+  o.scales.y.ticks.callback=v=>(S.mode==="brl"?"R$ ":"US$ ")+v.toLocaleString("pt-BR");
+  if(S.mode==="both")o.scales.y1={position:"right",ticks:{color:css("--brl"),callback:v=>"R$ "+v.toLocaleString("pt-BR")},grid:{display:false}};
+  chart=new Chart($("cv"),{type:"line",data:{labels:series.map(z=>fDate(z.d)),datasets:ds},options:o});
+}
+function opts(fmt,{legend}){return{maintainAspectRatio:false,animation:reduce?false:{duration:700},interaction:{mode:"index",intersect:false},
+  plugins:{legend:{display:!!legend,labels:{color:css("--soft"),boxWidth:12,usePointStyle:true}},tooltip:{callbacks:{label:i=>i.dataset.label+": "+fmt(i.parsed.y)}}},
+  scales:{x:{ticks:{color:css("--soft"),maxTicksLimit:8},grid:{display:false},border:{display:false}},
+    y:{ticks:{color:css("--soft"),callback:v=>fmt(v)},grid:{color:css("--hair")},border:{display:false}}}}}
+
+$("fileIn").onchange=async e=>{
+  const f=e.target.files[0],s=S.sheet;if(!f||!s||!S.assets||!S.db)return;
+  const b=$("photoBtn");if(b)b.textContent="Enviando…";
+  try{const a=await S.assets.upload(f);await S.db.doc("produtos/"+s.pid).update({fotoAsset:a.id})}
+  catch(err){if($("photoBtn"))$("photoBtn").textContent="Não foi possível salvar"}
+  e.target.value="";
+};
+
+/* ---------- dados ---------- */
+(async()=>{
+  try{const D=JSON.parse($("dados").textContent);S.produtos=D.produtos||[];S.lojas=D.lojas||[];S.coletas=D.coletas||[];renderAll()}catch(e){}
+  const emb={p:S.produtos.length,l:S.lojas.length,c:S.coletas.length};
+  const db=await window.claude?.use?.("db");
+  if(!db)return;
+  S.db=db;
+  window.claude.use("assets").then(a=>{S.assets=a}).catch(()=>{});
+  window.claude.use("user").then(u=>{S.user=u;loadNames();renderAll()}).catch(()=>{});
+  const timer=setTimeout(()=>{if(!S.coletas.length)$("tiles").innerHTML='<div class="empty">Ainda não consegui carregar os dados. Verifique a conexão; o painel tenta de novo sozinho.</div>'},10000);
+  db.collection("produtos").orderBy("ordem").onSnapshot(s=>{if(s.empty&&emb.p)return;S.produtos=s.docs.map(d=>({id:d.id,...d.data()}));renderAll();loadNames()},()=>{});
+  db.collection("lojas").orderBy("ordem").onSnapshot(s=>{if(s.empty&&emb.l)return;S.lojas=s.docs.map(d=>({id:d.id,...d.data()}));renderAll()},()=>{});
+  db.collection("coletas").orderBy("data").onSnapshot(s=>{if(s.empty&&emb.c){clearTimeout(timer);return}S.coletas=s.docs.map(d=>d.data());if(!s.metadata.fromCache)clearTimeout(timer);renderAll()},()=>clearTimeout(timer));
+})();
+</script>
+</body></html>
